@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemistry agent — surfactants and carbohydrate polymers</title>
+<style>
+  :root {
+    --ink:#1f2328; --muted:#6a737d; --line:#d8dee4; --bg:#ffffff; --panel:#f6f8fa;
+    --blue:#1b6ca8; --green:#3fa34d; --purple:#6a51a3; --amber:#c08a2e; --red:#a8456b;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+         color:var(--ink); background:var(--bg); }
+  header { padding:18px 24px 12px; border-bottom:1px solid var(--line); }
+  header h1 { margin:0 0 4px; font-size:19px; font-weight:650; }
+  header p.rule { margin:0; color:var(--muted); font-size:12.5px; max-width:900px; }
+  header p.counts { margin:8px 0 0; color:var(--muted); font-size:11.5px; font-family:var(--mono); }
+  nav { display:flex; gap:2px; flex-wrap:wrap; padding:0 24px; border-bottom:1px solid var(--line);
+        background:var(--panel); }
+  nav button { border:none; background:none; padding:10px 14px; font-size:13px; cursor:pointer;
+               color:var(--muted); border-bottom:2px solid transparent; font-weight:500; }
+  nav button:hover { color:var(--ink); }
+  nav button.active { color:var(--blue); border-bottom-color:var(--blue); }
+  nav button.p2.active { color:var(--purple); border-bottom-color:var(--purple); }
+  main { padding:20px 24px 60px; }
+  section { display:none; }
+  section.active { display:block; }
+  .intro { color:var(--muted); font-size:12.5px; margin:0 0 16px; max-width:900px; }
+  .split { display:grid; grid-template-columns:320px 1fr; gap:24px; align-items:start; }
+  @media (max-width:900px) { .split { grid-template-columns:1fr; } }
+  .controls { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; }
+  .controls label { display:block; font-size:12px; font-weight:600; margin:10px 0 4px; }
+  .controls label:first-child { margin-top:0; }
+  .hint { font-weight:400; color:var(--muted); font-size:11px; }
+  input[type=text], input[type=number], select, textarea {
+    width:100%; padding:6px 8px; border:1px solid var(--line); border-radius:5px;
+    font:13px var(--mono); background:#fff; color:var(--ink); }
+  textarea { font-size:12px; resize:vertical; }
+  .check { display:flex; align-items:center; gap:7px; margin:9px 0; font-size:12.5px; font-weight:500; }
+  .check input { margin:0; width:auto; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  button.go { margin-top:14px; width:100%; padding:9px; border:none; border-radius:6px;
+              background:var(--blue); color:#fff; font-size:13.5px; font-weight:600; cursor:pointer; }
+  button.go.p2 { background:var(--purple); }
+  button.go:disabled { background:var(--muted); cursor:progress; }
+  details.adv { margin-top:12px; border-top:1px solid var(--line); padding-top:10px; }
+  details.adv summary { font-size:12px; font-weight:600; cursor:pointer; }
+  .results { min-height:120px; }
+  .results h2 { font-size:16px; margin:0 0 4px; font-weight:650; }
+  .results p.desc { margin:0 0 14px; color:var(--muted); font-size:12.5px; }
+  .placeholder { color:var(--muted); font-size:13px; padding:28px; border:1px dashed var(--line);
+                 border-radius:8px; text-align:center; }
+  figure { margin:0 0 16px; border:1px solid var(--line); border-radius:8px; padding:10px;
+           background:#fff; text-align:center; }
+  figure img { max-width:100%; height:auto; }
+  table { border-collapse:collapse; width:100%; margin:0 0 16px; font-size:12.5px; }
+  caption { caption-side:top; text-align:left; font-weight:650; font-size:12px; padding:0 0 5px; }
+  th, td { border:1px solid var(--line); padding:5px 8px; text-align:left; vertical-align:top; }
+  th { background:var(--panel); font-weight:600; font-size:11.5px; }
+  td.k { width:230px; color:var(--muted); font-size:12px; }
+  td.v { font-family:var(--mono); font-size:12px; word-break:break-word; }
+  .tables2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:1200px) { .tables2 { grid-template-columns:1fr; } }
+  .scroll { overflow-x:auto; }
+  .note { border-left:3px solid var(--amber); background:#fdf8ee; padding:10px 12px;
+          border-radius:0 6px 6px 0; font-size:12.5px; margin:0 0 16px; }
+  .note b { display:block; margin-bottom:5px; font-size:11.5px; text-transform:uppercase;
+            letter-spacing:.04em; color:var(--amber); }
+  .note ul { margin:0; padding-left:18px; }
+  .note li { margin:3px 0; }
+  .err { border-left:3px solid var(--red); background:#fdf0f4; padding:10px 12px;
+         border-radius:0 6px 6px 0; font-size:12.5px; margin:0 0 16px; }
+  .err b { display:block; margin-bottom:4px; color:var(--red); }
+  .err code { font-family:var(--mono); font-size:11.5px; }
+  .flag { border-left:3px solid var(--red); background:#fdf0f4; padding:9px 12px; font-size:12.5px;
+          border-radius:0 6px 6px 0; margin:0 0 16px; }
+  .files { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 16px; }
+  .files a { font-family:var(--mono); font-size:11.5px; text-decoration:none; color:var(--blue);
+             border:1px solid var(--line); border-radius:5px; padding:4px 9px; background:#fff; }
+  .files a:hover { border-color:var(--blue); }
+  .examples { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+  .examples button { font-size:11px; padding:2px 7px; border:1px solid var(--line); background:#fff;
+                     border-radius:4px; cursor:pointer; color:var(--muted); font-family:var(--mono); }
+  .examples button:hover { color:var(--blue); border-color:var(--blue); }
+  .chat { border:1px solid var(--line); border-radius:8px; padding:14px; min-height:200px;
+          max-height:520px; overflow-y:auto; background:#fff; margin-bottom:14px; }
+  .msg { margin-bottom:14px; }
+  .msg .who { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted);
+              margin-bottom:3px; }
+  .msg.user .body { background:var(--panel); border-radius:6px; padding:8px 10px; font-size:13px; }
+  .msg .body { white-space:pre-wrap; font-size:13px; }
+  .trace { margin-top:8px; font-size:11.5px; }
+  .trace summary { cursor:pointer; color:var(--muted); }
+  .trace ol { margin:6px 0 0; padding-left:22px; font-family:var(--mono); font-size:11px; }
+  .agent-off { border-left:3px solid var(--amber); background:#fdf8ee; padding:9px 12px;
+               font-size:12.5px; border-radius:0 6px 6px 0; margin-bottom:14px; }
+  .inline-form { display:flex; gap:10px; align-items:flex-end; }
+  .inline-form > div { flex:1; }
+  .inline-form button.go { width:auto; margin-top:0; padding:9px 20px; }
+  .stack-label { display:block; font-size:12px; font-weight:600; margin-bottom:4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Chemistry agent — surfactants and carbohydrate polymers</h1>
+  <p class="rule">The model plans; it never computes. Every number on this page is produced by a
+    registered cheminformatics tool and is reproducible from the same call. Where a correlation is
+    outside its applicability domain the tool says so instead of estimating.</p>
+  <p class="counts" id="counts">loading…</p>
+</header>
+
+<nav id="nav">
+  <button data-tab="characterise" class="active">Characterise</button>
+  <button data-tab="modify">Modify / react</button>
+  <button data-tab="build">Build from a spec</button>
+  <button data-tab="series">Compare a series</button>
+  <button data-tab="polymer" class="p2">Polymer builder</button>
+  <button data-tab="analyse" class="p2">Polymer analyser</button>
+  <button data-tab="agent">Ask the agent</button>
+  <button data-tab="registry">Tool registry</button>
+</nav>
+
+<main>
+
+<section id="tab-characterise" class="active">
+  <p class="intro">Resolve a name, SMILES or InChI, then render and profile it. Workflow W1.</p>
+  <div class="split">
+    <div class="controls">
+      <label>Name, SMILES or InChI</label>
+      <input type="text" id="c-query" value="sodium lauryl sulfate">
+      <div class="examples" id="c-examples"></div>
+      <div class="check"><input type="checkbox" id="c-net" checked>
+        <span>Fall back to PubChem for unknown names</span></div>
+      <div class="check"><input type="checkbox" id="c-3d">
+        <span>Also export a 3D .pdb <span class="hint">(slower)</span></span></div>
+      <button class="go" id="c-go">Characterise</button>
+    </div>
+    <div class="results" id="c-out"><div class="placeholder">Results appear here.</div></div>
+  </div>
+</section>
+
+<section id="tab-modify">
+  <p class="intro">Apply a curated transformation and see exactly what changed. Workflow W2.</p>
+  <div class="split">
+    <div class="controls">
+      <label>Starting material</label>
+      <input type="text" id="m-start" value="lauric acid">
+      <label>Transformation</label>
+      <select id="m-rxn"></select>
+      <p class="hint" id="m-rxn-info" style="margin:5px 0 0"></p>
+      <label>Co-reactant <span class="hint">two-component reactions only</span></label>
+      <input type="text" id="m-co" value="DMAPA">
+      <div class="row2">
+        <div><label>Repeat n times</label>
+          <input type="number" id="m-rep" value="1" min="1" max="12"></div>
+        <div><label>Counterion</label>
+          <select id="m-ci">
+            <option value="">none</option><option value="Na" selected>Na</option>
+            <option value="K">K</option><option value="Cl">Cl</option>
+            <option value="Br">Br</option><option value="NH4">NH4</option>
+          </select></div>
+      </div>
+      <button class="go" id="m-go">Apply transformation</button>
+    </div>
+    <div class="results" id="m-out"><div class="placeholder">Results appear here.</div></div>
+  </div>
+</section>
+
+<section id="tab-build">
+  <p class="intro">Describe the surfactant you want instead of drawing it. Workflow W3.</p>
+  <div class="split">
+    <div class="controls">
+      <label>Carbons in the hydrophobe <span class="hint">includes the acyl carbon</span></label>
+      <input type="number" id="b-n" value="12" min="6" max="22">
+      <label>Head group</label>
+      <select id="b-head"></select>
+      <div class="row2">
+        <div><label>EO units</label><input type="number" id="b-eo" value="0" min="0" max="20"></div>
+        <div><label>Counterion</label>
+          <select id="b-ci">
+            <option value="" selected>class default</option><option value="Na">Na</option>
+            <option value="K">K</option><option value="Br">Br</option>
+            <option value="Cl">Cl</option><option value="none">none</option>
+          </select></div>
+      </div>
+      <label>Branching</label>
+      <select id="b-br">
+        <option value="linear" selected>linear</option><option value="iso">iso</option>
+        <option value="2-ethylhexyl-like">2-ethylhexyl-like</option>
+      </select>
+      <div class="check"><input type="checkbox" id="b-un">
+        <span>One cis double bond <span class="hint">needs 12+ carbons</span></span></div>
+      <button class="go" id="b-go">Build</button>
+    </div>
+    <div class="results" id="b-out"><div class="placeholder">Results appear here.</div></div>
+  </div>
+</section>
+
+<section id="tab-series">
+  <p class="intro">Build a homologous series and tabulate the property trend. Workflow W4.</p>
+  <div class="split">
+    <div class="controls">
+      <label>Head group</label>
+      <select id="s-head"></select>
+      <label>Chain lengths</label>
+      <input type="text" id="s-chains" value="10 12 14 16">
+      <div class="row2">
+        <div><label>EO units</label><input type="number" id="s-eo" value="0" min="0" max="12"></div>
+        <div><label>Counterion</label>
+          <select id="s-ci">
+            <option value="" selected>class default</option><option value="Na">Na</option>
+            <option value="K">K</option><option value="Br">Br</option>
+          </select></div>
+      </div>
+      <button class="go" id="s-go">Build series</button>
+    </div>
+    <div class="results" id="s-out"><div class="placeholder">Results appear here.</div></div>
+  </div>
+</section>
+
+<section id="tab-polymer">
+  <p class="intro">Build a carbohydrate-polymer exemplar from a repeat-unit spec, or load the
+    curated parameters for a named polymer. Workflows W5 and W6.</p>
+  <div class="split">
+    <div class="controls">
+      <label>Load a named polymer <span class="hint">fills the controls below</span></label>
+      <select id="p-named"><option value="">—</option></select>
+      <label>Monomer</label>
+      <select id="p-mono"></select>
+      <div class="row2">
+        <div><label>Linkage (1 to n)</label>
+          <select id="p-link"><option>2</option><option>3</option>
+            <option selected>4</option><option>6</option></select></div>
+        <div><label>Exemplar DP</label>
+          <input type="number" id="p-dp" value="6" min="2" max="20"></div>
+      </div>
+      <label>Real polymer DP for Mn <span class="hint">0 = same as exemplar</span></label>
+      <input type="number" id="p-tdp" value="0" min="0">
+      <details class="adv"><summary>Branching</summary>
+        <label>Branch monomer</label>
+        <select id="p-bmono"><option value="">none</option></select>
+        <div class="row2">
+          <div><label>Branch position</label>
+            <select id="p-blink"><option>2</option><option>3</option>
+              <option>4</option><option selected>6</option></select></div>
+          <div><label>Every n residues</label>
+            <input type="number" id="p-bevery" value="0" min="0" max="10"></div>
+        </div>
+      </details>
+      <details class="adv"><summary>Derivatisation</summary>
+        <label>Substituent</label>
+        <select id="p-sub"><option value="">none</option></select>
+        <div class="row2">
+          <div><label>Target DS</label>
+            <input type="number" id="p-ds" value="0" min="0" max="3" step="0.05"></div>
+          <div><label>Positions <span class="hint">blank = all free</span></label>
+            <input type="text" id="p-pos" placeholder="2 3 6"></div>
+        </div>
+      </details>
+      <button class="go p2" id="p-go">Build exemplar</button>
+    </div>
+    <div class="results" id="p-out"><div class="placeholder">Results appear here.</div></div>
+  </div>
+</section>
+
+<section id="tab-analyse">
+  <p class="intro">Interpret a carbohydrate structure you already have: residue identity, anomeric
+    configuration, every glycosidic linkage, substituents and the reducing end.</p>
+  <div class="inline-form">
+    <div><label class="stack-label">Carbohydrate SMILES</label>
+      <textarea id="a-smiles" rows="3"></textarea></div>
+    <button class="go p2" id="a-go">Analyse</button>
+  </div>
+  <div class="examples" id="a-examples" style="margin:8px 0 16px"></div>
+  <div class="results" id="a-out"><div class="placeholder">Results appear here.</div></div>
+</section>
+
+<section id="tab-agent">
+  <p class="intro">Natural language over the same tools. The tool calls behind each answer are
+    listed under the reply.</p>
+  <div id="g-status"></div>
+  <div class="chat" id="g-chat"><div class="placeholder">No messages yet.</div></div>
+  <div class="inline-form">
+    <div><input type="text" id="g-input"
+      placeholder="Swap the sulfate on SDS for an amine oxide and tell me what changes"></div>
+    <div style="flex:0 0 auto"><div class="check" style="margin:0">
+      <input type="checkbox" id="g-p2" checked><span>Phase 2 tools</span></div></div>
+    <button class="go" id="g-go">Send</button>
+  </div>
+</section>
+
+<section id="tab-registry">
+  <p class="intro">Every capability in the system. The panels above and the agent both dispatch
+    through this table; nothing exists outside it.</p>
+  <div class="scroll" id="r-out"></div>
+</section>
+
+</main>
+
+<script>
+"use strict";
+const el = (id) => document.getElementById(id);
+// paths are resolved against the page, so the app also works when it is served
+// under a sub-path (e.g. https://host/chem/) rather than at the domain root
+const API = new URL("api/", document.baseURI).href;
+let META = null;
+
+document.querySelectorAll("#nav button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#nav button").forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll("main section").forEach((s) => s.classList.remove("active"));
+    btn.classList.add("active");
+    el("tab-" + btn.dataset.tab).classList.add("active");
+  });
+});
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function kvTable(rows, caption) {
+  if (!rows || !rows.length) return "";
+  const body = rows.map((r) =>
+    `<tr><td class="k">${esc(r[0])}</td><td class="v">${esc(r[1])}</td></tr>`).join("");
+  return `<table>${caption ? `<caption>${esc(caption)}</caption>` : ""}<tbody>${body}</tbody></table>`;
+}
+function gridTable(cols, rows, caption) {
+  if (!rows || !rows.length) return "";
+  const head = cols.map((c) => `<th>${esc(c)}</th>`).join("");
+  const body = rows.map((r) => "<tr>" + r.map((v) =>
+    `<td class="v">${esc(v)}</td>`).join("") + "</tr>").join("");
+  return `<div class="scroll"><table>${caption ? `<caption>${esc(caption)}</caption>` : ""}` +
+         `<thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+function caveatBlock(list) {
+  if (!list || !list.length) return "";
+  return `<div class="note"><b>Assumptions and caveats returned by the tools</b><ul>` +
+         list.map((c) => `<li>${esc(c)}</li>`).join("") + `</ul></div>`;
+}
+function fileBlock(files) {
+  if (!files || !files.length) return "";
+  return `<div class="files">` + files.map((f) =>
+    `<a href="${new URL(esc(f.url).replace(/^\//, ""), document.baseURI).href}" download>${esc(f.name)}</a>`).join("") + `</div>`;
+}
+function imgBlock(src, alt) {
+  return src ? `<figure><img src="${src}" alt="${esc(alt || "structure")}"></figure>` : "";
+}
+function errBlock(msg) {
+  return `<div class="err"><b>Could not complete this request</b><code>${esc(msg)}</code></div>`;
+}
+function unresolvedBlock(d) {
+  const s = (d.suggestions || []).length ? `<br>Near matches: ${esc(d.suggestions.join(", "))}` : "";
+  return `<div class="err"><b>Not resolved</b>${esc(d.reason)}${s}<br>` +
+         `Next step: ${esc(d.next_step)}</div>`;
+}
+async function post(path, body, outId, btnId, render) {
+  const out = el(outId), btn = el(btnId);
+  out.innerHTML = `<div class="placeholder">Working…</div>`;
+  btn.disabled = true;
+  try {
+    const r = await fetch(API + path, { method: "POST", headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify(body) });
+    const d = await r.json();
+    if (d.unresolved) out.innerHTML = unresolvedBlock(d);
+    else if (!d.ok) out.innerHTML = errBlock(d.error || "unknown error");
+    else out.innerHTML = render(d);
+  } catch (e) {
+    out.innerHTML = errBlock(String(e));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function loadMeta() {
+  META = await (await fetch(API + "meta")).json();
+  const c = META.counts;
+  el("counts").textContent =
+    `${c.tools} tools · ${c.lexicon} lexicon entries · ${c.reactions} reactions · ` +
+    `${c.head_groups} head groups · ${c.monomers} monomer templates · ` +
+    `${c.named_polymers} named polymers · ${c.substituents} derivatisations`;
+
+  const heads = META.head_groups.map((h) =>
+    `<option value="${esc(h)}">${esc(h.replace(/_/g, " "))}</option>`).join("");
+  el("b-head").innerHTML = heads; el("s-head").innerHTML = heads;
+  el("b-head").value = "sulfate"; el("s-head").value = "sulfate";
+
+  el("m-rxn").innerHTML = META.reactions.map((r) =>
+    `<option value="${esc(r.key)}">${esc(r.key.replace(/_/g, " "))}</option>`).join("");
+  el("m-rxn").value = "amidation";
+  const showRxn = () => {
+    const r = META.reactions.find((x) => x.key === el("m-rxn").value);
+    el("m-rxn-info").textContent = r ? `${r.description} Reagents: ${r.reagents}` : "";
+  };
+  el("m-rxn").addEventListener("change", showRxn); showRxn();
+
+  const monos = META.monomers.map((m) =>
+    `<option value="${esc(m.key)}">${esc(m.name)}</option>`).join("");
+  el("p-mono").innerHTML = monos; el("p-mono").value = "b_glcp";
+  el("p-bmono").innerHTML = `<option value="">none</option>` + monos;
+  el("p-sub").innerHTML = `<option value="">none</option>` + META.substituents.map((s) =>
+    `<option value="${esc(s.key)}">${esc(s.name)}${s.typical_ds ?
+      " (typical DS " + esc(s.typical_ds) + ")" : ""}</option>`).join("");
+  el("p-named").innerHTML = `<option value="">—</option>` + META.named_polymers.map((p) =>
+    `<option value="${esc(p.key)}">${esc(p.name)}</option>`).join("");
+
+  el("c-examples").innerHTML = ["SDS", "cocamidopropyl betaine", "CTAB", "decyl glucoside"]
+    .map((n) => `<button type="button" data-v="${esc(n)}">${esc(n)}</button>`).join("");
+  el("c-examples").querySelectorAll("button").forEach((b) =>
+    b.addEventListener("click", () => { el("c-query").value = b.dataset.v; }));
+
+  el("a-examples").innerHTML = [
+    ["cellobiose (beta-1,4)",
+     "OC[C@H]1O[C@@H](O[C@H]2[C@H](O)[C@@H](O)[C@H](O)O[C@@H]2CO)[C@H](O)[C@@H](O)[C@@H]1O"],
+    ["maltose (alpha-1,4)",
+     "OC[C@H]1O[C@H](O[C@H]2[C@H](O)[C@@H](O)[C@@H](O)O[C@@H]2CO)[C@H](O)[C@@H](O)[C@@H]1O"]
+  ].map(([label, smi]) =>
+    `<button type="button" data-v="${esc(smi)}">${esc(label)}</button>`).join("");
+  el("a-examples").querySelectorAll("button").forEach((b) =>
+    b.addEventListener("click", () => { el("a-smiles").value = b.dataset.v; }));
+
+  el("r-out").innerHTML = gridTable(
+    ["tool", "phase", "category", "arguments", "writes files", "description"],
+    META.registry.map((r) => [r.tool, r.phase, r.category, r.inputs,
+                              r.writes_files ? "yes" : "no", r.description]));
+
+  if (!META.agent_available) {
+    el("g-status").innerHTML = `<div class="agent-off">The agent needs an LLM client. Set ` +
+      `ANTHROPIC_API_KEY and install the <code>anthropic</code> package, then restart the ` +
+      `server. Every other panel works without it.</div>`;
+  }
+}
+
+function onNamedPolymer() {
+  const key = el("p-named").value;
+  if (!key) return;
+  const p = META.named_polymers.find((x) => x.key === key);
+  const out = el("p-out");
+  let notes = `<h2>${esc(p.name)}</h2><p class="desc">${esc(p.summary)}</p>`;
+  if (p.notes.length) notes += caveatBlock(p.notes);
+  if (p.relevance) notes += kvTable([["formulation relevance", p.relevance]]);
+  if (!p.build) {
+    out.innerHTML = notes + `<div class="flag">This polymer has no build parameters in the ` +
+      `curated library — a declared Phase 2 gap. The controls were left unchanged.</div>`;
+    return;
+  }
+  const b = p.build;
+  el("p-mono").value = b.monomer || "b_glcp";
+  el("p-link").value = String(b.linkage || 4);
+  el("p-bmono").value = b.branch_monomer || "";
+  el("p-blink").value = String(b.branch_linkage || 6);
+  el("p-bevery").value = String(b.branch_every || 0);
+  el("p-sub").value = b.substituent || "";
+  el("p-ds").value = String(b.ds || 0);
+  out.innerHTML = notes + `<div class="placeholder">Controls filled from the curated library. ` +
+    `Press Build exemplar.</div>`;
+}
+
+el("c-go").addEventListener("click", () => post("characterise", {
+  query: el("c-query").value, use_network: el("c-net").checked, want_3d: el("c-3d").checked
+}, "c-out", "c-go", (d) =>
+  `<h2>${esc(d.title)}</h2>` + imgBlock(d.image, d.title) + kvTable(d.summary, "Resolution") +
+  `<div class="tables2">${kvTable(d.descriptors, "Molecular descriptors")}` +
+  `${kvTable(d.profile, "Surfactant profile")}</div>` +
+  fileBlock(d.files) + caveatBlock(d.caveats)));
+
+el("m-go").addEventListener("click", () => post("modify", {
+  start: el("m-start").value, reaction: el("m-rxn").value, co_reactant: el("m-co").value,
+  repeat: Number(el("m-rep").value), counterion: el("m-ci").value
+}, "m-out", "m-go", (d) =>
+  `<h2>${esc(d.title)}</h2><p class="desc">${esc(d.description)}</p>` +
+  imgBlock(d.image, "before and after") +
+  (d.ambiguous ? `<div class="flag"><b>Regiochemical ambiguity</b> — more than one site matched ` +
+                 `and the largest product was kept. Confirm the intended site before using this ` +
+                 `structure.</div>` : "") +
+  kvTable(d.summary, "Transformation") +
+  kvTable(d.comparison, "Similarity and property change") + caveatBlock(d.caveats)));
+
+el("b-go").addEventListener("click", () => post("build", {
+  tail_carbons: Number(el("b-n").value), head_group: el("b-head").value,
+  n_eo: Number(el("b-eo").value), counterion: el("b-ci").value,
+  branching: el("b-br").value, unsaturation: el("b-un").checked
+}, "b-out", "b-go", (d) =>
+  `<h2>${esc(d.title)}</h2>` + imgBlock(d.image, d.title) + kvTable(d.summary, "Built structure") +
+  kvTable(d.properties, "Properties") + fileBlock(d.files) + caveatBlock(d.caveats)));
+
+el("s-go").addEventListener("click", () => post("series", {
+  head_group: el("s-head").value, chains: el("s-chains").value,
+  n_eo: Number(el("s-eo").value), counterion: el("s-ci").value
+}, "s-out", "s-go", (d) =>
+  gridTable(d.columns, d.rows, "Series properties") + imgBlock(d.image, "series") +
+  fileBlock(d.files) + caveatBlock(d.caveats)));
+
+el("p-named").addEventListener("change", onNamedPolymer);
+el("p-go").addEventListener("click", () => post("polymer", {
+  monomer: el("p-mono").value, linkage: Number(el("p-link").value), dp: Number(el("p-dp").value),
+  target_dp: Number(el("p-tdp").value), branch_monomer: el("p-bmono").value,
+  branch_linkage: Number(el("p-blink").value), branch_every: Number(el("p-bevery").value),
+  substituent: el("p-sub").value, ds: Number(el("p-ds").value), positions: el("p-pos").value
+}, "p-out", "p-go", (d) =>
+  `<h2>${esc(d.title)}</h2>` + imgBlock(d.image, d.title) + kvTable(d.summary, "Specification") +
+  `<div class="tables2">${kvTable(d.polymer_quantities, "Polymer-level quantities")}` +
+  `${kvTable(d.read_back, "Read back from the built structure")}</div>` +
+  fileBlock(d.files) + caveatBlock(d.caveats)));
+
+el("a-go").addEventListener("click", () => post("analyse", {
+  smiles: el("a-smiles").value
+}, "a-out", "a-go", (d) =>
+  `<h2>${esc(d.title)}</h2>` + kvTable(d.summary, "Summary") +
+  gridTable(d.residue_columns, d.residues, "Residues") +
+  gridTable(d.linkage_columns, d.linkages, "Glycosidic linkages") + caveatBlock(d.caveats)));
+
+function appendMsg(who, html) {
+  const chat = el("g-chat");
+  if (chat.querySelector(".placeholder")) chat.innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "msg " + who;
+  div.innerHTML = `<div class="who">${who === "user" ? "you" : "agent"}</div>` +
+                  `<div class="body">${html}</div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+async function sendAgent() {
+  const msg = el("g-input").value.trim();
+  if (!msg) return;
+  el("g-input").value = "";
+  appendMsg("user", esc(msg));
+  const pending = appendMsg("agent", "<em>thinking…</em>");
+  el("g-go").disabled = true;
+  try {
+    const r = await fetch(API + "agent", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg, phase2: el("g-p2").checked })
+    });
+    const d = await r.json();
+    if (!d.ok) {
+      pending.querySelector(".body").innerHTML = errBlock(d.error);
+    } else {
+      const trace = d.trace.map((t) =>
+        `<li>${esc(t.tool)} ${t.ok ? "ok" : "FAILED: " + esc(t.error)}</li>`).join("");
+      pending.querySelector(".body").innerHTML = esc(d.answer) +
+        `<details class="trace"><summary>${d.trace.length} tool calls in ${d.steps} turns ` +
+        `(${d.seconds} s)</summary><ol>${trace}</ol></details>` + fileBlock(d.files);
+    }
+  } catch (e) {
+    pending.querySelector(".body").innerHTML = errBlock(String(e));
+  } finally {
+    el("g-go").disabled = false;
+  }
+}
+el("g-go").addEventListener("click", sendAgent);
+el("g-input").addEventListener("keydown", (e) => { if (e.key === "Enter") sendAgent(); });
+
+loadMeta();
+</script>
+</body>
+</html>
