@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chemagent"
+version = "0.1.0"
+description = "Chemistry LLM agent PoC: surfactant and carbohydrate-polymer reasoning over a deterministic RDKit tool layer"
+requires-python = ">=3.10"
+dependencies = [
+    "rdkit>=2023.9",
+    "pandas",
+    "pillow",
+]
+
+[project.optional-dependencies]
+web = ["fastapi", "uvicorn"]          # the HTML front end
+gradio = ["gradio>=5"]                # the Gradio front end
+agent = ["anthropic"]                 # the natural-language agent loop
+viewer = ["py3Dmol"]                  # the interactive 3D viewer tool
+all = ["fastapi", "uvicorn", "gradio>=5", "anthropic", "py3Dmol"]
+
+[project.scripts]
+chemagent-web = "chemagent.webapp:main"
+chemagent-gui = "chemagent.gui:main"
+
+[tool.setuptools]
+packages = ["chemagent"]
+
+[tool.setuptools.package-data]
+chemagent = ["data/*.json", "static/*.html"]
